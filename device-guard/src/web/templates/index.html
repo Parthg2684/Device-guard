@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Guard - USB Security Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bs-dark-bg: #111318;
+            --bs-dark-bg-subtle: #1a1d23;
+            --bs-dark-border: #3a3f4b;
+            --bs-body-color: #e4e6eb;
+            --bs-body-color-muted: #9ca3af;
+            --bs-primary-accent: #3b82f6;
+            --bs-success-accent: #10b981;
+            --bs-warning-accent: #f59e0b;
+            --bs-danger-accent: #ef4444;
+            --bs-info-accent: #0ea5e9;
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--bs-dark-bg);
+            color: var(--bs-body-color);
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            font-size: 1.75rem;
+        }
+
+        .page-header .text-muted {
+            font-size: 0.95rem;
+        }
+        
+        .nav-tabs { 
+            border-bottom: 2px solid var(--bs-dark-border);
+        }
+        
+        .nav-tabs .nav-link { 
+            color: var(--bs-body-color-muted);
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            color: var(--bs-body-color);
+            border-bottom-color: var(--bs-dark-border);
+        }
+        
+        .nav-tabs .nav-link.active { 
+            color: var(--bs-primary-accent);
+            background-color: transparent;
+            border-bottom: 2px solid var(--bs-primary-accent);
+        }
+
+        .card {
+            background-color: var(--bs-dark-bg-subtle);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .card-header {
+            background-color: transparent;
+            border-bottom: 1px solid var(--bs-dark-border);
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: left; /* Changed from center to left */
+        }
+
+        .card-header .fa-solid {
+            color: var(--bs-primary-accent);
+            margin-right: 0.5rem;
+        }
+        
+        .table {
+            background-color: transparent;
+            border-top: none;
+        }
+        
+        .table thead th {
+            color: var(--bs-body-color-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 2px solid var(--bs-dark-border);
+            background-color: var(--bs-dark-bg-subtle);
+            text-align: center;
+        }
+
+        .table tbody td {
+            color: var(--bs-body-color);
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--bs-dark-border);
+            vertical-align: middle;
+            transition: background-color 0.2s ease-in-out;
+            text-align: center;
+        }
+
+        .table tbody tr:first-child td {
+            border-top: none;
+        }
+        
+        .table-hover tbody tr:hover { 
+            background-color: #2d333b;
+        }
+
+        .serial-cell {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            white-space: normal;
+        }
+
+        code {
+            background-color: #111318;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: var(--bs-info-accent);
+        }
+        
+        .badge {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .status-badge i {
+            margin-right: 0.35rem;
+        }
+
+        .btn {
+            border-radius: 6px;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .btn i {
+            margin-right: 0.4rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .empty-state td {
+            padding: 3rem 1rem;
+            text-align: center;
+            color: var(--bs-body-color-muted);
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 0.75rem;
+        }
+
+        .toast {
+            background-color: var(--bs-dark-bg-subtle);
+            border: 1px solid var(--bs-dark-border);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .toast-header {
+            border-bottom: 1px solid var(--bs-dark-border);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header class="page-header d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fa-solid fa-shield-halved me-2 text-primary"></i> Device Guard</h1>
+                <p class="text-muted mb-0">Centralized USB Security Management</p>
+            </div>
+        </header>
+
+        <ul class="nav nav-tabs" id="main-tabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="detection-tab-btn" data-bs-toggle="tab" data-bs-target="#detection-tab-pane" type="button">
+                    <i class="fa-solid fa-satellite-dish"></i> Device Detection
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="registered-tab-btn" data-bs-toggle="tab" data-bs-target="#registered-tab-pane" type="button">
+                    <i class="fa-solid fa-list-check"></i> Registered Devices
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="settings-tab-btn" data-bs-toggle="tab" data-bs-target="#settings-tab-pane" type="button">
+                    <i class="fa-solid fa-gear"></i> Settings
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="logs-tab-btn" data-bs-toggle="tab" data-bs-target="#logs-tab-pane" type="button">
+                    <i class="fa-solid fa-file-lines"></i> Logs
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="detection-tab-pane" role="tabpanel">
+                <div class="d-flex justify-content-end mt-4">
+                    <button id="refresh-btn" class="btn btn-primary">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh Scanner
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-hard-drive"></i> External Storage Devices</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 25%;">Name</th>
+                                    <th style="width: 15%;">Status</th>
+                                    <th style="width: 8%;">Drive</th>
+                                    <th style="width: 12%;">VID/PID</th>
+                                    <th style="width: 25%;">Serial</th>
+                                    <th style="width: 15%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="storage-device-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-plug"></i> Other USB Devices</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Name</th>
+                                    <th style="width: 15%;">Status</th>
+                                    <th style="width: 15%;">VID/PID</th>
+                                    <th style="width: 25%;">Serial</th>
+                                    <th style="width: 15%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="other-device-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="registered-tab-pane" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-shield-halved"></i> Device Whitelist</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">Friendly Name</th>
+                                    <th style="width: 12%;">Type</th>
+                                    <th style="width: 8%;">VID</th>
+                                    <th style="width: 8%;">PID</th>
+                                    <th style="width: 25%;">Serial Number</th>
+                                    <th style="width: 12%;">Fingerprinted</th>
+                                    <th style="width: 15%;">Added On</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registered-devices-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="settings-tab-pane" role="tabpanel">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-gear"></i> Settings</div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><i class="fa-solid fa-user-shield me-2"></i> User Management</h5>
+                                <div class="mb-3">
+                                    <label for="current-user" class="form-label">Current User</label>
+                                    <input type="text" class="form-control" id="current-user" value="Administrator" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="admin-password" class="form-label">Admin Password</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="admin-password" placeholder="Enter new password">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="form-text">Change the admin password for device registration/removal</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirm-password" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confirm-password" placeholder="Confirm new password">
+                                </div>
+                                <button class="btn btn-primary" id="update-password-btn">
+                                    <i class="fa-solid fa-key me-2"></i> Update Password
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fa-solid fa-shield-virus me-2"></i> Security Settings</h5>
+                                <div class="mb-3">
+                                    <label for="auto-block" class="form-label">Auto-block Unknown Devices</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="auto-block" checked>
+                                        <label class="form-check-label" for="auto-block">
+                                            Automatically block unregistered USB storage devices
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="log-level" class="form-label">Log Level</label>
+                                    <select class="form-select" id="log-level">
+                                        <option value="INFO">Info</option>
+                                        <option value="WARNING">Warning</option>
+                                        <option value="ERROR">Error</option>
+                                        <option value="DEBUG">Debug</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="max-log-size" class="form-label">Max Log Size (MB)</label>
+                                    <input type="number" class="form-control" id="max-log-size" value="10" min="1" max="100">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><i class="fa-solid fa-database me-2"></i> Database Management</h5>
+                                <button class="btn btn-warning mb-2" id="export-db-btn">
+                                    <i class="fa-solid fa-download me-2"></i> Export Whitelist
+                                </button>
+                                <button class="btn btn-danger mb-2" id="clear-db-btn">
+                                    <i class="fa-solid fa-trash me-2"></i> Clear All Devices
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fa-solid fa-clock-rotate-left me-2"></i> System</h5>
+                                <button class="btn btn-info mb-2" id="view-logs-btn">
+                                    <i class="fa-solid fa-file-lines me-2"></i> View Logs
+                                </button>
+                                <button class="btn btn-secondary mb-2" id="restart-service-btn">
+                                    <i class="fa-solid fa-arrows-rotate me-2"></i> Restart Service
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="logs-tab-pane" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <h4><i class="fa-solid fa-file-lines me-2"></i> System Logs</h4>
+                    <div>
+                        <button class="btn btn-sm btn-outline-secondary" id="refresh-logs-btn">
+                            <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary" id="clear-logs-btn">
+                            <i class="fa-solid fa-trash me-2"></i> Clear Logs
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card bg-dark">
+                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto;">
+                        <div id="logs-container" class="font-monospace small p-3">
+                            <div class="text-center text-muted">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Loading logs...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="appToast" class="toast" role="alert">
+            <div id="toastHeader" class="toast-header">
+                <strong id="toastTitle" class="me-auto"></strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div id="toastBody" class="toast-body"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/app.js"></script>
+</body>
+</html>
