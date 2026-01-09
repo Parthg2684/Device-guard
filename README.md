@@ -27,30 +27,31 @@ A comprehensive USB device security management tool that provides real-time devi
 
 ```
 device-guard/
-├── main.py                 # Main application entry point
-├── agent.py                # Background enforcement agent
-├── usb_guard_service.py    # Core USB monitoring service
-├── windows_service.py      # Windows service wrapper
-├── install_service.bat     # Service installation script
-├── run_background.bat      # Standalone background runner
-├── requirements.txt        # Python dependencies
-├── backend/                # Backend modules
-│   ├── db.py              # Database operations
-│   ├── detector.py        # USB device detection
-│   ├── fingerprinter.py    # Device fingerprinting
-│   ├── logger.py          # Logging system
-│   ├── enforcer.py        # Device enforcement
-│   ├── firewall_manager.py # Windows Firewall management
-│   ├── remote_access_manager.py # RDP management
-│   ├── security_audit_manager.py # Security auditing
-│   ├── host_key.pem       # RSA host key
-│   └── whitelist.db       # SQLite database
-├── static/                 # Frontend assets
-│   └── app.js            # JavaScript application logic
-├── templates/              # HTML templates
-│   └── index.html        # Main web interface
-└── logs/                  # Application logs
-    └── app_log.log       # Runtime log file
+├── 📄 README.md               # Main documentation
+├── 📄 LICENSE                 # MIT license
+├── 📄 requirements.txt        # Dependencies
+├── 📄 .gitignore              # Git ignore rules
+├── 🚀 main.py                # Main application entry point
+├── 📂 src/                   # Source code (simple folder, not package)
+│   ├── 📄 db.py              # Database operations
+│   ├── 📄 detector.py        # USB device detection
+│   ├── 📄 enforcer.py        # Device enforcement
+│   ├── 📄 fingerprinter.py   # Device fingerprinting
+│   ├── 📄 logger.py          # Logging system
+│   ├── 📄 usb_guard_service.py # Main monitoring service
+│   ├── 📄 windows_service.py   # Windows service wrapper
+│   ├── 📂 static/            # Frontend assets
+│   │   └── 📄 app.js        # JavaScript application
+│   └── 📂 templates/        # HTML templates
+│       └── 📄 index.html    # Main web interface
+├── 📂 config/               # Configuration files
+│   └── 📄 host_key.pem       # RSA private key
+├── 📂 data/                 # Data storage
+│   ├── 📄 whitelist.db       # SQLite database
+│   └── 📄 app_log.log        # Application logs
+└── 📂 scripts/              # Installation scripts
+    ├── 📄 install_service.bat # Windows service installer
+    └── 📄 run_background.bat  # Background runner
 ```
 
 ## Installation
