@@ -142,36 +142,6 @@ python windows_service.py remove
 python windows_service.py status
 ```
 
-## Technical Details
-
-- **Backend**: Flask web server with SQLite database
-- **Frontend**: Bootstrap 5 with vanilla JavaScript
-- **Security**: RSA encryption for device signatures
-- **Platform**: Windows (WMI for device detection)
-- **Database**: SQLite for device whitelist storage
-- **Service**: Windows Service with pywin32-service
-
-## API Endpoints
-
-- `GET /api/usb_devices` - Get detected USB devices
-- `POST /api/devices/register` - Register new device
-- `POST /api/devices/remove` - Remove registered device
-- `POST /api/devices/verify` - Verify device fingerprint
-- `GET /api/registered_devices` - Get registered devices
-- `GET /api/settings/logs` - Get system logs
-- `POST /api/settings/clear_logs` - Clear system logs
-- `GET /api/settings/export_db` - Export database
-- `POST /api/settings/clear_db` - Clear database
-
-## Dependencies
-
-- Flask - Web framework
-- pywebview - Desktop application window
-- wmi - Windows Management Instrumentation
-- cryptography - Encryption and signing
-- pywin32 - Windows API access
-- pywin32-service - Windows service framework
-
 ## Security Notes
 
 - Run as Administrator for full device blocking capabilities
